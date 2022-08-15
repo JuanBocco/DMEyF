@@ -286,7 +286,7 @@ for (mb in c(1, as.integer(ms / 2))) {
                                     mb,
                                     ms,
                                     md,
-                                    gan_semillas)
+                                    mean(gan_semillas))
                                 ))
 }
 }

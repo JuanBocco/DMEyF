@@ -281,6 +281,8 @@ ggplot(hojasordenadas, aes(x = p_evento, y = acc)) +
 ## -¿Cuál es el threshold optimo según la curva de accuracy?
 ## - Si hubiéramos elegido nuestro modelo usando el accuracy, ¿Cuanta plata
 ##   hubiera ganado o perdido la empresa?
+## - ¿Es necesario que la salida del modelo sea un probabilidad para aplicar
+##   estos conceptos?
 
 ## TAREA:
 ## - Construya la curva correspondiente al F1 Score.
