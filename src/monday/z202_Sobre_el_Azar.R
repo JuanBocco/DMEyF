@@ -177,7 +177,7 @@ resultados_n_mcv <- c()
 set.seed(semillas[1])
 for (i in 1:50) {
     resultados_n_mcv <- c(resultados_n_mcv,
-            resultados_N[sample(.N, cantidad_arboles), mean(ganancia)])
+            mean(resultados_n_gan[sample(n, cantidad_arboles)]))
 }
 
 # La menor ganancia conseguida en test
@@ -217,7 +217,7 @@ for (s in semillas) {
     modelo <- rpart(clase_binaria ~ .,
                     data = dtrain,
                     xval = 0,
-                    cp = 0, 
+                    cp = 0,
                     minsplit = 20,
                     minbucket = 1,
                     maxdepth = 5)
@@ -281,12 +281,12 @@ for (mb in c(1, as.integer(ms / 2))) {
     resultados_grid_search <- rbindlist(list(
                                 resultados_grid_search,
                                 data.table(
-                                    tiempo,
-                                    cp,
-                                    mb,
-                                    ms,
-                                    md,
-                                    mean(gan_semillas))
+                                    tiempo = tiempo,
+                                    cp = cp,
+                                    mb = mb,
+                                    ms = ms,
+                                    md = md,
+                                    gan = mean(gan_semillas))
                                 ))
 }
 }
@@ -294,7 +294,7 @@ for (mb in c(1, as.integer(ms / 2))) {
 }
 
 # Visualizo los parámetros de los mejores parámetros
-View(resultados_grid_search[gan_semillas == max(gan_semillas), ])
+View(resultados_grid_search[gan == max(gan), ])
 
 ## TAREA:
 ## Una vez que tenga sus mejores parámetros, haga una copia del script
