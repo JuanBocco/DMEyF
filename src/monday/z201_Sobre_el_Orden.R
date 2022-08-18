@@ -33,7 +33,7 @@ arbol <- rpart(formula =    "clase_ternaria ~ .",
                  minbucket = 1,
                  maxdepth =  4)
 
-View(arbol)
+print(arbol)
 
 ## Preguntas
 ## Usualmente se suele cortar las variables en 2 intervalos
@@ -87,7 +87,7 @@ tablahojas <- function(arbol, datos, target = "clase_ternaria") {
 
 # Ejecutamos la función sobre nuestro modelo, con nuestros datos
 hojas <- tablahojas(arbol, dtrain)
-View(hojas)
+print(hojas)
 
 ## Preguntas
 ## - ¿Con qué criterio eligió la clase de cada hoja que determino la
@@ -100,7 +100,7 @@ View(hojas)
 
 # Agregamos un nuevo campo de nombre ganancia
 hojas[, ganancia := `BAJA+2` * 78000 - 2000 * (CONTINUA + `BAJA+1`)]
-View(hojas)
+print(hojas)
 
 ## Pregunta
 ## - ¿Cuantás hojas que no son BAJA+2 tienen aún así ganancia positiva?
@@ -109,7 +109,7 @@ View(hojas)
 ## Step 4: Sumarizando el envío
 ## ---------------------------
 
-View(hojas[ganancia > 0, .(
+print(hojas[ganancia > 0, .(
     ganancia = sum(ganancia),
     enviados = sum(TOTAL),
     sevan = sum(`BAJA+2`))])
@@ -146,9 +146,9 @@ hojasbinario <- tablahojas(arbolbinario, dtrain, "clase_binaria")
 
 # Y agregamos la ganancia de cada hoja
 hojasbinario[, ganancia := evento * 78000 - 2000 * noevento]
-View(hojasbinario)
+print(hojasbinario)
 # Por último sumarizamos
-View(hojasbinario[ganancia > 0,
+print(hojasbinario[ganancia > 0,
  .(ganancia = sum(ganancia), enviados = sum(TOTAL), sevan = sum(evento))])
 
 ## Pregunta
@@ -169,7 +169,7 @@ hojasordenadas <- hojasbinario[order(-p_evento),]
 # fila con probabilidad más alta hasta la fila N, para cada fila.
 hojasordenadas[, gan_acum := cumsum(ganancia)]
 
-View(hojasordenadas)
+print(hojasordenadas)
 
 # TAREAS:
 # - Calculé la probabilidad de NO evento
@@ -224,7 +224,7 @@ hojasordenadas[, fn := evento_restantes]
 
 # Para validar los cálculos anteriores vamos a visualizar solo los campos
 # importantes
-View(hojasordenadas[, .(p_evento, evento, noevento, tp, tn, fp, fn)])
+print(hojasordenadas[, .(p_evento, evento, noevento, tp, tn, fp, fn)])
 
 ## ---------------------------
 ## Step 9: Armando nuestra curva ROC
@@ -258,7 +258,7 @@ require("geometry")
 x <- c(hojasordenadas$fpr,1)
 y <- c(hojasordenadas$tpr, 0)
 # El valor de la auc
-View(polyarea(x, y))
+print(polyarea(x, y))
 
 
 ## Preguntas
