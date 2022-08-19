@@ -1,5 +1,5 @@
 #Arbol elemental con libreria  rpart
-#Debe tener instaladas las lib rerias  data.table  ,  rpart  y  rpart.plot
+#Debe tener instaladas las librerias  data.table  ,  rpart  y  rpart.plot
 
 #cargo las librerias que necesito
 require("data.table")
@@ -7,12 +7,12 @@ require("rpart")
 require("rpart.plot")
 
 #Aqui se debe poner la carpeta de la materia de SU computadora local
-  
+
 setwd("~/Desktop/Maestría/DM_EyF")#Establezco el Working Directory
 
 getwd()
 
-#cargo el dataset
+#cargo el dataset 
 dataset  <- fread("./datasets/competencia1_2022.csv")
 
 dtrain  <- dataset[ foto_mes==202101 ]  #defino donde voy a entrenar
@@ -54,4 +54,5 @@ dir.create( "./exp/KA2001" )
 fwrite( dapply[ , list(numero_de_cliente, Predicted) ], #solo los campos para Kaggle
         file= "./exp/KA2001/K101_001.csv",
         sep=  "," )
+
 
