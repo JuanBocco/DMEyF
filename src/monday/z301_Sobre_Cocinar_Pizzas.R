@@ -21,10 +21,12 @@ require("ggplot2")
 require("lubridate")
 require("lhs")
 require("DiceKriging")
-require("mlrMBO")
+require("mlrMBO") 
 
 # Poner la carpeta de la materia de SU computadora local
-setwd("/home/aleb/dmeyf2022")
+getwd()
+
+setwd("/Users/angus/Desktop/Maestria/DM_EyF")
 # Poner sus semillas
 semillas <- c(17, 19, 23, 29, 31)
 
@@ -117,11 +119,11 @@ print(seconds_to_period(n_md * n_ms * n_seeds * model_time * n_mb))
 ## Step 4: Empezando a probar con menos casos
 ## ---------------------------
 
-set.seed(semillas[1])
+set.seed(semillas[2])
 dist_uni <- matrix(runif(20), 10, 2)
 
 # LHS Latin hypercube sampling
-set.seed(semillas[1])
+set.seed(semillas[2])
 dist_lhs <- optimumLHS(10, 2)
 
 par(mfrow = c(1, 2))
@@ -172,7 +174,7 @@ table(dataset[ds_sample]$clase_binaria)
 ## - ¿Hay mejores formas de muestrear?
 ## - ¿Es bueno muestrear?
 ## - ¿Qué efectos en las métricas va a producir el muestreo?
-## - ¿Por qué se eligió usar el AUC?
+## - ¿Por qué se eligió usar el AUC? No se ve afectada por el desbalanceo de los datos
 ## - ¿Qué hay que cambiar en la función de ganancia para poder utilizarla?
 
 ## ---------------------------
@@ -261,7 +263,8 @@ ggplot(resultados_random_search, aes(x = md, y = ms, color = auc)) +
 ## ---------------------------
 ## Step 8: Trabajando con herramientas más profesionales
 ## ---------------------------
-
+install.packages("rgenoud")
+require("rgenoud")
 # Veamos un ejemplo
 set.seed(semillas[1])
 obj_fun <- makeSingleObjectiveFunction(
@@ -312,7 +315,7 @@ ggplot(resultados_maxdepth, aes(md, auc)) + geom_point()
 ## Step 9: Buscando con una Opt. Bayesiana para 1 parámetro
 ## ---------------------------
 
-set.seed(semillas[1])
+set.seed(semillas[2])
 obj_fun_md <- function(x) {
   experimento_rpart(dataset, semillas, md = x$maxdepth)
 }
@@ -348,7 +351,7 @@ print(run_md)
 ## Step 10: Buscando con una Opt. Bayesiana para 2 parámetros
 ## ---------------------------
 
-set.seed(semillas[1])
+set.seed(semillas[5])
 obj_fun_md_ms <- function(x) {
   experimento_rpart(dataset, semillas
             , md = x$maxdepth
@@ -388,3 +391,65 @@ print(run_md_ms)
 ## Agregue todos los parámetros que considere. Una vez que tenga sus mejores
 ## parámetros, haga una copia del script rpart/z101_PrimerModelo.R, cambie los
 ## parámetros dentro del script, ejecutelo y suba a Kaggle su modelo.
+
+
+## ---------------------------
+## Step 11: Buscando con una Opt. Bayesiana para 2 parámetros
+## ---------------------------
+
+set.seed(semillas[5])
+obj_fun_md_ms_mb <- function(x) {
+  experimento_rpart(dataset, semillas
+                    , md = x$maxdepth
+                    , ms = x$minsplit
+                    , mb = floor(x$minsplit * x$minbucket))
+}
+
+obj_fun <- makeSingleObjectiveFunction(
+  minimize = FALSE,
+  fn = obj_fun_md_ms_mb,
+  par.set = makeParamSet(
+    makeIntegerParam("maxdepth",  lower = 4L, upper = 20L),
+    makeIntegerParam("minsplit",  lower = 1L, upper = 200L),
+    makeNumericParam("minbucket",  lower = 0, upper = 1)
+    
+    # makeNumericParam <- para parámetros continuos
+  ),
+  noisy = TRUE,
+  has.simple.signature = FALSE
+)
+
+ctrl <- makeMBOControl()
+ctrl <- setMBOControlTermination(ctrl, iters = 30L)
+ctrl <- setMBOControlInfill(
+  ctrl,
+  crit = makeMBOInfillCritEI(),
+  opt = "focussearch",
+  # sacar parámetro opt.focussearch.points en próximas ejecuciones
+  opt.focussearch.points = 20
+)
+
+lrn <- makeMBOLearner(ctrl, obj_fun)
+
+surr_km <- makeLearner("regr.km", predict.type = "se", covtype = "matern3_2")
+
+run_md_ms <- mbo(obj_fun, learner = surr_km, control = ctrl, )
+print(run_md_ms_mb)
+
+# Armamos una función para modelar con el fin de simplificar el código futuro
+modelo_rpart <- function(train, test, cp =  0, ms = 20, mb = 1, md = 10) {
+  modelo <- rpart(clase_binaria ~ ., data = train,
+                  xval = 0,
+                  cp = cp,
+                  minsplit = ms,
+                  minbucket = mb,
+                  maxdepth = md)
+  
+  test_prediccion <- predict(modelo, test, type = "prob")
+  roc_pred <-  ROCR::prediction(test_prediccion[, "evento"],
+                                test$clase_binaria,
+                                label.ordering = c("noevento", "evento"))
+  auc_t <-  ROCR::performance(roc_pred, "auc")
+  
+  unlist(auc_t@y.values)
+}
