@@ -354,10 +354,10 @@ fwrite( entrega,
 # dataset[ , campo43 := as.integer(campo1==1 & campo22==0 & cdescubierto_preacordado==1 & campo18 == 0 & Visa_msaldodolares>=-73.215 & campo20==0 )]
 
 
-dataset[ , campo44 := as.integer(campo1==0 & campo28==0 & Visa_status<8 & ctrx_quarter >= 47 & cpayroll_trx>=1)]
-dataset[ , campo45 := as.integer(campo1==0 & campo28==0 & Visa_status<8 & ctrx_quarter >= 47 & cpayroll_trx<1 & r_mtarjeta_visa_consumo>=7)]
-dataset[ , campo46 := as.integer(campo1==0 & campo28==0 & Visa_status<8 & ctrx_quarter >= 47 & cpayroll_trx<1 & r_mtarjeta_visa_consumo<7)]
-dataset[ , campo47 := as.integer(campo1==0 & campo28==0 & Visa_status<8 & ctrx_quarter < 47 & cpayroll_trx<1 & Visa_msaldototal<3658.5)]
-dataset[ , campo48 := as.integer(campo1==0 & campo28==0 & Visa_status<8 & ctrx_quarter < 47 & cpayroll_trx<1 & Visa_msaldototal>=3658.5)]
+# dataset[ , campo44 := as.integer(campo1==0 & campo28==0 & Visa_status<8 & ctrx_quarter >= 47 & cpayroll_trx>=1)]
+# dataset[ , campo45 := as.integer(campo1==0 & campo28==0 & Visa_status<8 & ctrx_quarter >= 47 & cpayroll_trx<1 & r_mtarjeta_visa_consumo>=7)]
+# dataset[ , campo46 := as.integer(campo1==0 & campo28==0 & Visa_status<8 & ctrx_quarter >= 47 & cpayroll_trx<1 & r_mtarjeta_visa_consumo<7)]
+# dataset[ , campo47 := as.integer(campo1==0 & campo28==0 & Visa_status<8 & ctrx_quarter < 47 & cpayroll_trx<1 & Visa_msaldototal<3658.5)]
+# dataset[ , campo48 := as.integer(campo1==0 & campo28==0 & Visa_status<8 & ctrx_quarter < 47 & cpayroll_trx<1 & Visa_msaldototal>=3658.5)]
 
 
