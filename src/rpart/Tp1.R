@@ -149,7 +149,7 @@ modelo <-  rpart(  formula= "clase_ternaria ~ .",
                    data= dataset[ foto_mes==202101],
                    xval= 0,
                    cp= 0.0,
-                   maxdepth =2)
+                   maxdepth =4)
 prp(modelo, extra=101, digits=5, branch=1, type=4, varlen=0, faclen=0, tweak=1.3)
 prp(modelo, extra=101, digits=5, branch=1, type=4, varlen=0, faclen=0, tweak=1.3, cex=1.2)
 # Esperaba ver un albol de profundidad 2 sin embargo, 
