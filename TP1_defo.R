@@ -141,20 +141,6 @@ dataset[ , campo19 := as.integer(campo1==1 & cdescubierto_preacordado==1 & campo
 dataset[ , campo20 := as.integer(campo1==1 & cdescubierto_preacordado==1 & campo16==0 & Visa_status>=8)]
 dataset[ , campo21 := as.integer(campo1==1 & cdescubierto_preacordado==1 & campo16==0 & Visa_status<8)]
 
-# dataset[ , campo22 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras<99.7 & r_cliente_antiguedad<9)]
-# dataset[ , campo23 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras<99.7 & r_cliente_antiguedad>=9)]
-# dataset[ , campo24 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras>=99.7 & r_mrentabilidad_annual<9)]
-# dataset[ , campo25 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras>=99.7 & r_mrentabilidad_annual>=5)]
-# 
-# dataset[ , campo26 := as.integer(campo1==0 & campo14==1 & Visa_status>=8 & thomebanking==0)]
-# dataset[ , campo27 := as.integer(campo1==0 & campo14==1 & Visa_status>=8 & thomebanking==1)]
-# dataset[ , campo28 := as.integer(campo1==0 & campo14==1 & Visa_status<8 & r_mprestamos_personales < 26)]
-# dataset[ , campo29 := as.integer(campo1==0 & campo14==1 & Visa_status<8 & r_mprestamos_personales >= 26)]
-# 
-# dataset[ , campo30 := as.integer(campo1==0 & campo14==0 & Visa_status>=8 & r_cliente_edad>=30)]
-# dataset[ , campo31 := as.integer(campo1==0 & campo14==0 & Visa_status>=8 & r_cliente_edad<30)]
-# dataset[ , campo32 := as.integer(campo1==0 & campo14==0 & Visa_status<8 & ctrx_quarter < 47)]
-# dataset[ , campo33 := as.integer(campo1==0 & campo14==0 & Visa_status<8 & ctrx_quarter >= 47)]
 
 
 #################################################################################
@@ -338,6 +324,20 @@ fwrite( entrega,
 
 # 24 es 2000 1.4 13 con 0.07 de corte =23
 
+# dataset[ , campo22 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras<99.7 & r_cliente_antiguedad<9)]
+# dataset[ , campo23 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras<99.7 & r_cliente_antiguedad>=9)]
+# dataset[ , campo24 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras>=99.7 & r_mrentabilidad_annual<9)]
+# dataset[ , campo25 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras>=99.7 & r_mrentabilidad_annual>=5)]
+# 
+# dataset[ , campo26 := as.integer(campo1==0 & campo14==1 & Visa_status>=8 & thomebanking==0)]
+# dataset[ , campo27 := as.integer(campo1==0 & campo14==1 & Visa_status>=8 & thomebanking==1)]
+# dataset[ , campo28 := as.integer(campo1==0 & campo14==1 & Visa_status<8 & r_mprestamos_personales < 26)]
+# dataset[ , campo29 := as.integer(campo1==0 & campo14==1 & Visa_status<8 & r_mprestamos_personales >= 26)]
+# 
+# dataset[ , campo30 := as.integer(campo1==0 & campo14==0 & Visa_status>=8 & r_cliente_edad>=30)]
+# dataset[ , campo31 := as.integer(campo1==0 & campo14==0 & Visa_status>=8 & r_cliente_edad<30)]
+# dataset[ , campo32 := as.integer(campo1==0 & campo14==0 & Visa_status<8 & ctrx_quarter < 47)]
+# dataset[ , campo33 := as.integer(campo1==0 & campo14==0 & Visa_status<8 & ctrx_quarter >= 47)]
 
 
 # dataset[ , campo34 := as.integer(campo1==1 & campo22==0 & cdescubierto_preacordado==0 & ccajas_transacciones == 1)]
