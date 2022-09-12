@@ -15,10 +15,10 @@ require("rpart")
 require("ggplot2")
 
 
-# Poner la carpeta de la materia de SU computadora local
-setwd("/home/aleb/dmeyf2022")
+# Pon(er la carpeta de la materia de SU computadora local
+getwd()
 # Poner sus semillas
-semillas <- c(17, 19, 23, 29, 31)
+semillas <- c(888809, 888827, 888857, 888869, 888887)
 
 # Cargamos el dataset
 dataset <- fread("./datasets/competencia1_2022.csv")

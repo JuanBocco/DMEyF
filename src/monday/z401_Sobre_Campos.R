@@ -38,7 +38,7 @@ dataset[, clase_binaria := ifelse(
 # Borramos el target viejo
 dataset[, clase_ternaria := NULL]
 
-set.seed(semillas[1])
+set.seed(semillas[4])
 
 # Particionamos de forma estratificada
 in_training <- caret::createDataPartition(dataset$clase_binaria,
@@ -63,8 +63,8 @@ modelo <- rpart(clase_binaria ~ .,
                 data = dtrain,
                 xval = 0,
                 cp = -1,
-                minsplit = 20,
-                minbucket = 10,
+                minsplit = 110,
+                minbucket = 440,
                 maxdepth = 5)
 
 calcular_ganancia(modelo, dtest)
@@ -214,7 +214,7 @@ experimento <- function() {
     gan <- c()
     for (s in semillas) {
         set.seed(s)
-        in_training <- caret::createDataPartition(dataset$clase_binaria, p = 0.70,
+        in_training <- caret::createDataPartition(dataset$clase_ternaria, p = 0.70,
             list = FALSE)
         train  <-  dataset[in_training, ]
         test   <-  dataset[-in_training, ]
@@ -229,7 +229,7 @@ experimento <- function() {
                                            mean_Visa_fechaalta,
                                            Visa_fechaalta)] 
 
-        r <- rpart(clase_binaria ~ .,
+        r <- rpart(clase_ternaria ~ .,
                     data = train,
                     xval = 0,
                     cp = -1,
@@ -327,8 +327,8 @@ log(9.5 + 1)
 ## Step 7: Outliers - Una más y no jodemos más 
 ## ---------------------------
 
-dtrain[, r_ctrx_quarter := ntile(ctrx_quarter, 10)]
-dtest[, r_ctrx_quarter := ntile(ctrx_quarter, 10)]
+dtrain[, ctrx_quarter_2 := ntile(ctrx_quarter, 10)]
+dtest[, ctrx_quarter_2 := ntile(ctrx_quarter, 10)]
 
 modelo_cq_4 <- rpart(clase_binaria ~ . - ctrx_quarter - ctrx_quarter_2 - Visa_fechaalta_2 - Visa_fechaalta_3,
                     data = dtrain,
@@ -374,8 +374,8 @@ mis_variables <- c("ctrx_quarter",
 
 prefix <- "r_"
 for (var in mis_variables) {
-    dtrain[, (paste(prefix, var, sep = "")) := ntile(get(var), 10)]
-    dtest[, (paste(prefix, var, sep = "")) := ntile(get(var), 10)]
+    dtrain[, (paste(prefix, var, sep = "")) := ntile(get(var), 20)]
+    dtest[, (paste(prefix, var, sep = "")) := ntile(get(var), 20)]
 }
 
 dtrain

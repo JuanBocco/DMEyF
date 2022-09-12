@@ -10,6 +10,8 @@
 ## --- Albert Einstein
 ##
 
+
+
 # Limpiamos el entorno
 rm(list = ls())
 gc(verbose = FALSE)
@@ -21,9 +23,9 @@ require("treeClust")
 require("ggplot2")
 
 # Poner la carpeta de la materia de SU computadora local
-setwd("/home/aleb/dmeyf2022")
+setwd("/Users/angus/Desktop/Maestria/DM_EyF")
 # Poner sus semillas
-semillas <- c(17, 19, 23, 29, 31)
+semillas <- c(888809, 888827, 888857, 888869, 888887)
 
 # Cargamos el dataset
 dataset <- fread("./datasets/competencia1_2022.csv")
@@ -39,23 +41,34 @@ dataset <- dataset[foto_mes == 202101]
 # Veamos las variables más importantes
 # ctrx_quarter
 ggplot(dataset, aes(x = ctrx_quarter)) +
-  facet_grid(clase_ternaria ~ .) +
+  facet_grid(clase_binaria ~ .) +
   geom_density()
 
 # Zoom por favor
 ggplot(dataset[ctrx_quarter < 300, ], aes(x = ctrx_quarter)) +
-  facet_grid(clase_ternaria ~ .) +
+  facet_grid(clase_binaria ~ .) +
   geom_density()
+
+# pareciera ser, a primera vista que ambos diagramas de densidad son parecidos
 
 # Cantidad de préstamos personales
 dcast(dataset, cprestamos_personales  ~ clase_ternaria,
                 length,
                 value.var = "clase_ternaria")
+# la variable mas imporante. y otra variable importantisima como prestamos personales
+# esto muestra desde el pov del arbol
+
 
 ggplot(dataset[mcuentas_saldo > 0 &
                 mcuentas_saldo < 10000, ], aes(x = mcuentas_saldo)) +
-  facet_grid(clase_ternaria ~ .) +
+  facet_grid(clase_binaria ~ .) +
   geom_histogram()
+
+# monto que tiene en la cuenta una persona
+# Existe distinción entre baja +1 y baja+2 ? No
+# entonces como trabajo con las clases? Para esto esta clase
+
+
 
 ## Preguntas
 ## ¿Cómo funciona una árbol de decisión?
@@ -91,7 +104,7 @@ dtest   <-  dataset[-in_training, ]
 parametros <- list(cp = -1, minsplit = 1073, minbucket = 278, maxdepth = 9)
 # MUY IMPORTANTE: No estamos sacando los otros targets del dataset, hay
 # que sacarlos en la fórmula como esta debajo.
-modelo_bin2 <- rpart(clase_binaria2 ~ . - clase_ternaria - clase_binaria1,
+modelo_bin2 <- rpart(clase_binaria2 ~ . - clase_ternaria - clase_binaria1, # en lugar de borrarla del df, la resta
                 data = dtrain,
                 xval = 0,
                 control = parametros)
@@ -107,6 +120,9 @@ print(sum(
     )
 )
 
+# al desarmar clases se desarma todo. el cambio en el balanceo, afecta al punto de corte (en este caso 0.025)
+# 
+
 ## Preguntas
 ## ¿Obtuvo una importante mejora en su modelo?
 ## ¿Qué detalle fue creado con la clase BAJA+2 en mente que ya no aplica?
@@ -121,6 +137,8 @@ print(sum(
 # - Calcula la ganancia en base
 # - Ordena de mayor a menor ganancia
 # - Agrega un prefijo para poder juntar diferentes resultados.
+
+# funcion que transforma hojas en una tabla
 
 # hoja train/test(continua baja+1 baja+2 evento noevento prob ganancia)
 leaves_table <- function(model, train, target, prefix = "") {
@@ -155,6 +173,8 @@ leaves_table <- function(model, train, target, prefix = "") {
     leaves[]
 }
 
+
+
 # Examinamos las nuevas hojas de nuestro modelo para entender las nuevas
 # probabilidad. Primero sobre TRAIN
 
@@ -171,6 +191,9 @@ print(train_bin2)
 
 train_bin2[, gan_acum := cumsum(gan) / 0.7]
 train_bin2[, n_acum := cumsum(n) / 0.7]
+
+# calculo la funcion de ganancia acumulada en cada punto de corte. En la salida busco el valor maximo en la columnaa
+# ganancia acumulada
 
 print(train_bin2)
 
@@ -196,6 +219,10 @@ train_bin2[pos_max_gan, n_acum / 0.7]
 ## Off topic: Si jugamos con clases, jugemos en serio
 ## ---------------------------
 
+
+# no solo se pueden juntar clases sino que se pueden manipular clases y sacar clases
+# la clave es seleccion de clases
+
 # Saquemos los registros de la clase BAJA+1 para entrenar, porque la C1
 # también esta lleno de loquitos...
 
@@ -208,6 +235,9 @@ train_sin_b1 <- leaves_table(modelo_sin_b1, dtrain, "clase_binaria2")
 train_sin_b1[, gan_acum := cumsum(gan) / 0.7]
 train_sin_b1[, n_acum := cumsum(n)]
 train_sin_b1
+
+# fue tan buena la manipulacion de clases que no optimizo hiperparámetros
+# ahora vemos cuanto de esto tiene sentido en test
 
 ## Sin preguntas ni comentarios
 
@@ -226,6 +256,12 @@ res_bin2[, te_n_acum := cumsum(te_n) / 0.3]
 # Solo veamos algunas columnas
 print(res_bin2[, c("p", "n", "gan", "gan_acum", "te_n", "te_gan",
                   "te_gan_acum", "te_n_acum")])
+
+# todo esto es una semilla sola. hay que mirar mas las tablas, no mirar tantos hiperparámetros
+# miro los nodos en train y test y veo si son los mismos
+
+# como elijo el mejor nodo de test. que elementos envío ? todos los puntos de corte ? todos los nodos?
+# 
 
 ## Preguntas
 ## ¿Se mantiene el punto de corte en train como en test?
@@ -274,6 +310,22 @@ for (s in semillas) {
                 "te_gan_acum", "te_n_acum")])
 
 }
+# usar el punto de corte como un parametro mas, se puede optimizar.
+
+# juntar clases, es bueno?
+
+# si nos vamos muy abajo con el punto de corte no es bueno
+# se elije uno en funcion de los distintos test
+
+# lo qye mandaamos a kaggle es los eventos con probabilidad mayor al punto de corte
+# tiene sentido cortrar por el n? mandar los primeros 1000 por ejemplo?
+# hay que tener cuidado porque pueden caer todos los n en una sola hoja y no me va a hacer todo el análisis
+
+
+# miro los distintos puntos de corte para las semillas, luego elijo uno que me deje comodo y lo pruebo
+# puedo llegar a una conclusion mirando test
+
+# habria que optimizarlo bayesianamente. 
 
 ## Agregue estadísticos para tomar una mejor decisión.
 

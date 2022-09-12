@@ -28,7 +28,7 @@ getwd()
 
 setwd("/Users/angus/Desktop/Maestria/DM_EyF")
 # Poner sus semillas
-semillas <- c(17, 19, 23, 29, 31)
+semillas <- c(888809, 888827, 888857, 888869, 888887)
 
 # Cargamos el dataset
 dataset <- fread("./datasets/competencia1_2022.csv")
@@ -41,6 +41,8 @@ dataset[, clase_binaria := ifelse(
                                 "evento",
                                 "noevento"
                             )]
+# BAJA+1 + BAJA+2 funciona mejor
+
 # Borramos el target viejo
 dataset[, clase_ternaria := NULL]
 
@@ -409,9 +411,9 @@ obj_fun <- makeSingleObjectiveFunction(
   minimize = FALSE,
   fn = obj_fun_md_ms_mb,
   par.set = makeParamSet(
-    makeIntegerParam("maxdepth",  lower = 4L, upper = 20L),
-    makeIntegerParam("minsplit",  lower = 1L, upper = 200L),
-    makeNumericParam("minbucket",  lower = 0, upper = 1)
+    makeIntegerParam("maxdepth",  lower = 4L, upper = 14L),
+    makeIntegerParam("minsplit",  lower = 100L, upper = 200L),
+    makeNumericParam("minbucket",  lower = 0, upper = 20)
     
     # makeNumericParam <- para parámetros continuos
   ),
