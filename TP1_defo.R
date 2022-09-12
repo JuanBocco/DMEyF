@@ -136,30 +136,30 @@ dataset[ , campo15 := as.integer(campo1==0 & ctrx_quarter<28 & mcaja_ahorro>=260
 dataset[ , campo16 := as.integer(campo1==1 & cdescubierto_preacordado==1 & mpasivos_margen<8.05)]
 dataset[ , campo17 := as.integer(campo1==1 & cdescubierto_preacordado==1 & mpasivos_margen>=8.05)]
  
- dataset[ , campo18 := as.integer(campo1==1 & cdescubierto_preacordado==1 & campo16==1 & Master_Fvencimiento>=-713)]
- dataset[ , campo19 := as.integer(campo1==1 & cdescubierto_preacordado==1 & campo16==1 & Master_Fvencimiento< -713)]
- dataset[ , campo20 := as.integer(campo1==1 & cdescubierto_preacordado==1 & campo16==0 & Visa_status>=8)]
- dataset[ , campo21 := as.integer(campo1==1 & cdescubierto_preacordado==1 & campo16==0 & Visa_status<8)]
- 
- dataset[ , campo22 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras<99.7 & r_cliente_antiguedad<9)]
- dataset[ , campo23 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras<99.7 & r_cliente_antiguedad>=9)]
- dataset[ , campo24 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras>=99.7 & r_mrentabilidad_annual<9)]
- dataset[ , campo25 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras>=99.7 & r_mrentabilidad_annual>=5)]
- 
- dataset[ , campo26 := as.integer(campo1==0 & campo14==1 & Visa_status>=8 & thomebanking==0)]
- dataset[ , campo27 := as.integer(campo1==0 & campo14==1 & Visa_status>=8 & thomebanking==1)]
- dataset[ , campo28 := as.integer(campo1==0 & campo14==1 & Visa_status<8 & r_mprestamos_personales < 26)]
- dataset[ , campo29 := as.integer(campo1==0 & campo14==1 & Visa_status<8 & r_mprestamos_personales >= 26)]
- 
- dataset[ , campo30 := as.integer(campo1==0 & campo14==0 & Visa_status>=8 & r_cliente_edad>=30)]
- dataset[ , campo31 := as.integer(campo1==0 & campo14==0 & Visa_status>=8 & r_cliente_edad<30)]
- dataset[ , campo32 := as.integer(campo1==0 & campo14==0 & Visa_status<8 & ctrx_quarter < 47)]
- dataset[ , campo33 := as.integer(campo1==0 & campo14==0 & Visa_status<8 & ctrx_quarter >= 47)]
+dataset[ , campo18 := as.integer(campo1==1 & cdescubierto_preacordado==1 & campo16==1 & Master_Fvencimiento>=-713)]
+dataset[ , campo19 := as.integer(campo1==1 & cdescubierto_preacordado==1 & campo16==1 & Master_Fvencimiento< -713)]
+dataset[ , campo20 := as.integer(campo1==1 & cdescubierto_preacordado==1 & campo16==0 & Visa_status>=8)]
+dataset[ , campo21 := as.integer(campo1==1 & cdescubierto_preacordado==1 & campo16==0 & Visa_status<8)]
+
+dataset[ , campo22 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras<99.7 & r_cliente_antiguedad<9)]
+dataset[ , campo23 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras<99.7 & r_cliente_antiguedad>=9)]
+dataset[ , campo24 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras>=99.7 & r_mrentabilidad_annual<9)]
+dataset[ , campo25 := as.integer(campo1==1 & cdescubierto_preacordado==0 & mcomisiones_otras>=99.7 & r_mrentabilidad_annual>=5)]
+
+dataset[ , campo26 := as.integer(campo1==0 & campo14==1 & Visa_status>=8 & thomebanking==0)]
+dataset[ , campo27 := as.integer(campo1==0 & campo14==1 & Visa_status>=8 & thomebanking==1)]
+dataset[ , campo28 := as.integer(campo1==0 & campo14==1 & Visa_status<8 & r_mprestamos_personales < 26)]
+dataset[ , campo29 := as.integer(campo1==0 & campo14==1 & Visa_status<8 & r_mprestamos_personales >= 26)]
+
+dataset[ , campo30 := as.integer(campo1==0 & campo14==0 & Visa_status>=8 & r_cliente_edad>=30)]
+dataset[ , campo31 := as.integer(campo1==0 & campo14==0 & Visa_status>=8 & r_cliente_edad<30)]
+dataset[ , campo32 := as.integer(campo1==0 & campo14==0 & Visa_status<8 & ctrx_quarter < 47)]
+dataset[ , campo33 := as.integer(campo1==0 & campo14==0 & Visa_status<8 & ctrx_quarter >= 47)]
 
 
+#################################################################################
 
-
-
+# variables nuevas pensando en el dominio
 
 
 dataset[ , prisionero := as.integer(ccuenta_debitos_automaticos>=1 & (cpagodeservicios+ cpagomiscuentas)>=1 & ctrx_quarter>=2 & ctarjeta_debito_transacciones>= 5 & (cseguro_vida+cseguro_auto+cseguro_vivienda)>=1)]
@@ -230,6 +230,7 @@ dataset <- dataset[, -c( #"numero_de_cliente",
 #################################################################################
 #################################################################################
 
+# separo mi conjunto de validacion
 
 dtrain <- dataset[ foto_mes==202101 ]
 dapply <- dataset[ foto_mes==202103 ]
@@ -258,9 +259,9 @@ calcular_ganancia <- function(modelo, test) {
 }
 
 param  <- list("cp"= -1,
-               "minsplit"=  1400,
+               "minsplit"=  200,
                "minbucket" = 0.4,
-               "maxdepth" = 17)
+               "maxdepth" = 5)
 
 
 modelo_test <- rpart(clase_binaria ~ ., # - agregar variavkes
@@ -277,7 +278,7 @@ calcular_ganancia(modelo_test, dtest)
 #################################################################################
 
 
-# Sobtre dapply
+# Sobtre prueba (para Kaggle)
 
 
 set.seed(semillas[5])
