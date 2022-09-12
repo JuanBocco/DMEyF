@@ -256,7 +256,7 @@ calcular_ganancia <- function(modelo, test) {
     (pred_testing[, "evento"] >= 0.025) * ifelse(dtest$clase_binaria == "evento", #######
                                                  78000, -2000) / 0.3
   )
-}
+} 
 
 param  <- list("cp"= -1,
                "minsplit"=  200,
