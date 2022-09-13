@@ -164,17 +164,17 @@ dataset[ , invierte := (minversion1_pesos + minversion2 + minversion1_dolares >0
 
 
 dataset <- dataset[, -c( #"numero_de_cliente",
-                           #"ctrx_quarter",
-                           #"campo1",
-                           #"campo14",
-                          # "Visa_status",
-                          # "Master_status",
-                          # "r_cliente_antiguedad",
-                          # "r_mrentabilidad_annual",
-                          # "r_mprestamos_personales",
-                          # "r_cliente_edad",
-                          # "thomebanking",
-                          # "Master_Fvencimiento",
+                         #"ctrx_quarter",
+                         #"campo1",
+                         #"campo14",
+                         # "Visa_status",
+                         # "Master_status",
+                         # "r_cliente_antiguedad",
+                         # "r_mrentabilidad_annual",
+                         # "r_mprestamos_personales",
+                         # "r_cliente_edad",
+                         # "thomebanking",
+                         # "Master_Fvencimiento",
                          "mprestamos_personales",
                          "mtarjeta_visa_consumo",
                          "mtarjeta_master_consumo",
@@ -228,7 +228,7 @@ ncol(dapply)
 #los hiperparametros van en una lista
 #notar la forma en que esos parametros se pasan a la funcion rpart
 
-set.seed(semillas[5])
+set.seed(semillas[1])
 
 # Particionamos de forma estratificada
 in_training <- caret::createDataPartition(dtrain$clase_binaria, ######
@@ -267,7 +267,7 @@ calcular_ganancia(modelo_test, dtest)
 # Sobtre prueba (para Kaggle)
 
 
-set.seed(semillas[5])
+set.seed(semillas[1])
 modelo <-  rpart::rpart(formula= "clase_binaria ~ .", #"clase_ternaria ~ ." , # "clase_binaria ~ .",
                         data= dtrain,
                         xval= 0,
