@@ -230,8 +230,12 @@ which(importancia3$variable == "pollito")
 dataset <- fread("./datasets/competencia2_2022.csv.gz")
 
 
+dataset2 <- dataset
+dataset2[is.na(dataset2), ] <- 0
 
+print(sum(is.na(dataset2$Visa_fechaalta)))
 
+dataset <- dataset2
 
 
 
@@ -294,15 +298,13 @@ model_lgm <- lightgbm(data = dtrain,
 # También tiene su importancia de variables
 lgb.importance(model_lgm, percentage = TRUE)
 
+
 ## ---------------------------
 ## Step 8: En Mayo
 ## ---------------------------
 
 pred <- predict(model_lgm, data.matrix(mayo[, 1:154]))
 
-# TOTAL
-sum((mayo$pred > 0.025) *
-      ifelse(mayo$clase_ternaria == "BAJA+2", 78000, -2000))
 
 # Sobre 100 LB
 leaderboad <- data.table()
@@ -331,6 +333,6 @@ entrega[ , .N, Predicted]
 dir.create( "./exp/KAGGLE2/", showWarnings = FALSE )
 
 fwrite( entrega,
-        file= "./exp/KAGGLE2/comp2_001.csv",
+        file= "./exp/KAGGLE2/comp2_002.csv",
         sep=  "," )
 
