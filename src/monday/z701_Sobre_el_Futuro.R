@@ -13,6 +13,39 @@
 # vamos aprovechar (y recomendar que usted también lo haga) Enero para
 # experimentar contra Marzo.
 
+
+# clase lu 19/09
+
+# concept drift y data drift
+
+# se va a basar en los scripts de gustavo: 
+
+## Data drift ejemplo blackberry 
+
+# variable device, es categorica. que tipo de moviles hay
+# esta variable cambia mucho
+
+# con el tiempo cambia la estructura de la variable, sigue ordenando el modelo pero
+# va perdiendo soporte
+
+# variables en pesos puede tener data drift
+# light gbm binariza automaticamente 
+
+# hay variables que fueron siendo reemplazadas por otras que van ganando relevancia
+# porque el negocio cambia, esto es concept drift: el camabio que tiene un fenomeno con
+# respecto a su variable. cambia la variable 
+
+# data drifting se soluciona con ranking
+
+# concept drifting se soluciona con un nuevo modelo
+
+# marzo cross validation y apuntar contra mayo
+# si hay variables que generan ruido es mejor sacarlas
+# el criterio para elegirlas se propone visual pero se puede usar:
+
+# Kolmogov Smirnov, por ejemplo, u otros.
+
+
 rm(list = ls())
 gc(verbose = FALSE)
 
@@ -23,9 +56,9 @@ require("ggplot2")
 require("lightgbm")
 
 # Poner la carpeta de la materia de SU computadora local
-setwd("/home/aleb/dmeyf2022")
+setwd('/Users/angus/Desktop/Maestria/DM_EyF/DMEyF')
 # Poner sus semillas
-semillas <- c(17, 19, 23, 29, 31)
+semillas <- c(888809, 888827, 888857, 888869, 888887)
 
 # Cargamos los datasets y nos quedamos solo con 202101 y 202103
 dataset <- fread("./datasets/competencia2_2022.csv.gz")
@@ -66,6 +99,12 @@ sum((marzo$pred > 0.025) * ifelse(marzo$clase_ternaria == "BAJA+2", 78000, -2000
 length(marzo$pred)
 length(unique(marzo$pred))
 
+# cadaa persona esta dando su propio score
+# ya no sirve elegir los nodos, ahora tengo que empezar a buscar y corregir el punto de corte
+# todos los elementos son distintos (esto se observa en las 2 lineas de codigo precedente)
+
+
+
 ## Preguntas
 ## - ¿Qué diferencia observa con respecto a ?
 
@@ -90,6 +129,11 @@ sum((marzo$pred[-split] > 0.025) * ifelse(marzo$clase_ternaria[-split] == "BAJA+
 # Pero... que pasa si mandamos otra cantidad de casos?
 # Vamos a mandar los N mejores casos, de a separaciones de M
 
+# en vez de pensarlo como punto de corte lo pienso en lotes. no pienso el % de corte sino en la cantidad a enviar.
+# estilo elegir las mejores 7000 mil.
+# vamos a mover la canitdad en funcion de la ganancia
+# ordeno las probabilidades
+
 ## ---------------------------
 ## Step 4: Buscando el mejor punto de corte en el leaderboard público.
 ## ---------------------------
@@ -99,9 +143,9 @@ setorder(marzo, cols = -pred)
 
 # PROBAR MULTIPLES VALORES
 set.seed(semillas[3])
-m <- 500
+m <- 200 # saltos cuanticos de los envios de 2000 a 12000
 f <- 2000
-t <- 12000
+t <- 18000
 
 leaderboad <- data.table()
 split <- caret::createDataPartition(marzo$clase_ternaria, p = 0.50, list = FALSE)
@@ -118,9 +162,28 @@ for (s in seq(f, t, m)) {
                         ))
 }
 # Graficamos
+ggplot(leaderboad[board == 'publico', ], aes(x = envio, y = valor, color = board)) + geom_line()
+
 ggplot(leaderboad, aes(x = envio, y = valor, color = board)) + geom_line()
+
+
 
 ## ACTIVE LEARNING: Juegue con los parámetros y busque si hay alguna información
 ## en el leaderboard público que le de una estrategia para elegir la cantidad
 ## adecuada para ganar maximizar la ganancia del privado.
+
+
+# elegir el maximo minimo local del publico
+# hay bajas de mala calidad y de buena calidad, faciles y no tan faciles de seprara
+
+# ese orden de los bajas hace que ese orden manifieste picos hacia abajo, entonces cuando el publico
+# muestra un pico hacia abajo, seguramente mejore en el privado porque compensa el efecto
+
+
+
+
+
+
+
+
 
