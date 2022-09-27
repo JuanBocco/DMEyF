@@ -32,18 +32,26 @@ options(error = function() {
 
 #Aqui se cargan los hiperparametros
 hs <- makeParamSet( 
-  makeNumericParam("learning_rate",    lower=    0.005, upper=    0.3),
+  makeNumericParam("learning_rate",    lower=    0.004, upper=    0.3),
   makeNumericParam("feature_fraction", lower=    0.2  , upper=    1.0),
-  makeIntegerParam("min_data_in_leaf", lower=    100L   , upper=  8000L),
-  makeIntegerParam("num_leaves",       lower=   16L   , upper=  1024L),
-  makeIntegerParam("envios",           lower= 5000L   , upper= 15000L)
+  makeIntegerParam("min_data_in_leaf", lower=    500L   , upper=  8000L),
+  makeIntegerParam("num_leaves",       lower=   16L   , upper=  856L),
+  makeIntegerParam("envios",           lower= 7500L   , upper= 9500L),
+  #makeIntegerParam("bagging_fraction",  lower= 0.6   , upper= 0.8),
+  makeIntegerParam("lambda_l1",           lower= 0L   , upper= 100L)
+  #makeIntegerParam("lambda_l2",           lower= 0L   , upper= 100L)
 )
+
+
+# bagging fraction
+# extra tree
+
 
 #defino los parametros de la corrida, en una lista, la variable global  PARAM
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM  <- list()
 
-PARAM$experimento  <- "JB_Opt_LGBM004"
+PARAM$experimento  <- "JB_Opt_LGBM004b"
 
 PARAM$input$dataset       <- "./exp/FE_C2/dataset_C2_FE.csv.gz"
 PARAM$input$training      <- c( 202103 )
@@ -126,8 +134,8 @@ EstimarGanancia_lightgbm  <- function( x )
                           verbosity= -100,
                           max_depth=  -1,         # -1 significa no limitar,  por ahora lo dejo fijo
                           min_gain_to_split= 0.0, #por ahora, lo dejo fijo
-                          lambda_l1= 0.0,         #por ahora, lo dejo fijo
-                          lambda_l2= 0.0,         #por ahora, lo dejo fijo
+                          #lambda_l1= 0.0,         #por ahora, lo dejo fijo
+                          #lambda_l2= 0.0,         #por ahora, lo dejo fijo
                           max_bin= 31,            #por ahora, lo dejo fijo
                           num_iterations= 9999,   #un numero muy grande, lo limita early_stopping_rounds
                           force_row_wise= TRUE,   #para que los alumnos no se atemoricen con tantos warning
