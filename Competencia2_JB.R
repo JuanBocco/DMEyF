@@ -1,5 +1,10 @@
 # Modelo definitivo LIGHT GBM
 
+#limpio la memoria
+rm( list=ls() )  #remove all objects
+gc()             #garbage collection
+
+
 require("data.table")
 require("rpart")
 require("rpart.plot")
@@ -19,26 +24,24 @@ require("lightgbm")
 
 # son varios archivos, subirlos INTELIGENTEMENTE a Kaggle
 
-#limpio la memoria
-rm( list=ls() )  #remove all objects
-gc()             #garbage collection
 
 #defino los parametros de la corrida, en una lista, la variable global  PARAM
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM <- list()
-PARAM$experimento  <- "KA_LGBM_C2005"
+PARAM$experimento  <- "KA_LGBM_C2006"
 
 PARAM$input$dataset       <- "./exp/FE_C2/dataset_C2_FE.csv.gz"
 PARAM$input$training      <- c( 202103 )
 PARAM$input$future        <- c( 202105 )
 
 PARAM$finalmodel$max_bin           <- 31
-PARAM$finalmodel$learning_rate     <- 0.00503356337981915 #0.0142501265
-PARAM$finalmodel$num_iterations    <- 1694  #615
-PARAM$finalmodel$num_leaves        <- 163  #784
-PARAM$finalmodel$min_data_in_leaf  <- 103  #5628
-PARAM$finalmodel$feature_fraction  <- 0.20346786106983  #0.8382482539
+PARAM$finalmodel$learning_rate     <- 0.00401885268991084 #0.0142501265
+PARAM$finalmodel$num_iterations    <- 1826  #615
+PARAM$finalmodel$num_leaves        <- 407  #784
+PARAM$finalmodel$min_data_in_leaf  <- 506  #5628
+PARAM$finalmodel$feature_fraction  <- 0.331092081112783  #0.8382482539
 PARAM$finalmodel$semilla           <- 888809
+PARAM$finalmodel$lambda_l1           <- 13
 
 semillas <- c(888809, 888827, 888857, 888869, 888887)
 #------------------------------------------------------------------------------
@@ -134,7 +137,7 @@ setorder( tb_entrega, -prob )
 
 #genero archivos con los  "envios" mejores
 #deben subirse "inteligentemente" a Kaggle para no malgastar submits
-cortes <- seq( 10300, 10500, by=100)
+cortes <- seq( 7800, 13200, by=300)
 for( envios  in  cortes )
 {
   tb_entrega[  , Predicted := 0L ]
