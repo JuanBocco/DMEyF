@@ -28,7 +28,7 @@ require("lightgbm")
 #defino los parametros de la corrida, en una lista, la variable global  PARAM
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM <- list()
-PARAM$experimento  <- "KA_LGBM_C2006"
+PARAM$experimento  <- "KA_LGBM_C2007"
 
 PARAM$input$dataset       <- "./exp/FE_C2/dataset_C2_FE.csv.gz"
 PARAM$input$training      <- c( 202103 )
@@ -99,14 +99,15 @@ modelo  <- lgb.train( data= dtrain,
                                    num_leaves=         PARAM$finalmodel$num_leaves,
                                    min_data_in_leaf=   PARAM$finalmodel$min_data_in_leaf,
                                    feature_fraction=   PARAM$finalmodel$feature_fraction,
-                                   seed=               PARAM$finalmodel$semilla
+                                   seed=               PARAM$finalmodel$semilla,
+                                   lambda_l1=          PARAM$finalmodel$lambda_l1
                       )
 )
 
 #--------------------------------------
 #ahora imprimo la importancia de variables
 tb_importancia  <-  as.data.table( lgb.importance(modelo) ) 
-archivo_importancia  <- "impo_LGBM_C2005.txt"
+archivo_importancia  <- "impo_LGBM_C2007.txt"
 
 fwrite( tb_importancia, 
         file= archivo_importancia, 
@@ -128,7 +129,7 @@ tb_entrega[  , prob := prediccion ]
 
 #grabo las probabilidad del modelo
 fwrite( tb_entrega,
-        file= "prediccion_LGBM_C2005.txt",
+        file= "prediccion_LGBM_C2007.txt",
         sep= "\t" )
 
 #ordeno por probabilidad descendente
@@ -137,7 +138,7 @@ setorder( tb_entrega, -prob )
 
 #genero archivos con los  "envios" mejores
 #deben subirse "inteligentemente" a Kaggle para no malgastar submits
-cortes <- seq( 7800, 13200, by=300)
+cortes <- seq( 6000, 12500, by=200)
 for( envios  in  cortes )
 {
   tb_entrega[  , Predicted := 0L ]
@@ -147,6 +148,11 @@ for( envios  in  cortes )
           file= paste0(  PARAM$experimento, "_", envios, ".csv" ),
           sep= "," ) 
 }
+
+
+var_importance <- lgb.importance(modelo)$Feature
+var_importance
+tb_importancia_2  <-  as.data.table(var_importance) 
 
 #--------------------------------------
 
