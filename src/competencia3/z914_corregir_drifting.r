@@ -57,7 +57,15 @@ AgregarVariables  <- function( dataset )
                                           ifelse( is.na(Visa_status), 10, Visa_status), 
                                           Master_status)  ]
 
-
+  dataset[ , prisionero := as.integer(ccuenta_debitos_automaticos>=1 & (cpagodeservicios+ cpagomiscuentas)>=1 & ctrx_quarter>=2 & ctarjeta_debito_transacciones>= 5 & (cseguro_vida+cseguro_auto+cseguro_vivienda)>=1)]
+  
+  dataset[ , tiene_saldo := as.integer( mcuentas_saldo > 0 ) ]                    
+  dataset[ , sueldo_sobre_lim := (Master_mlimitecompra+Visa_mlimitecompra)/(mpayroll+mpayroll2)]
+  dataset[ , consumo_sobre_lim := (Master_mlimitecompra+Visa_mlimitecompra) - (mtarjeta_visa_consumo+mtarjeta_master_consumo)]
+  dataset[ , tiene_deuda := (mprestamos_personales+mprestamos_prendarios+mprestamos_hipotecarios) > 0]
+  dataset[ , invierte := (minversion1_pesos + minversion2 + minversion1_dolares >0)]
+  
+  
   #combino MasterCard y Visa
   dataset[ , vm_mfinanciacion_limite := rowSums( cbind( Master_mfinanciacion_limite,  Visa_mfinanciacion_limite) , na.rm=TRUE ) ]
 
