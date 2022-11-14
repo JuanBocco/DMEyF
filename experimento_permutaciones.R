@@ -15,7 +15,7 @@ PARAM <- list()
 PARAM$experimento <- "ZZ1292_ganancias_semillerio"
 PARAM$exp_input <- "ZZ9410_semillerio"
 
-PARAM$corte <- 11000 # cantidad de envios
+PARAM$corte <- 7000 # cantidad de envios
 # FIN Parametros del script
 
 options(error = function() {
@@ -47,7 +47,6 @@ dataset <- julio
 dataset_julio <- dataset
 rm(dataset)
 
-typeof(dataset)
 
 dataset_julio[, clase_real := ifelse(clase_ternaria == "BAJA+2", 1, 0)]
 # Nos quedamos con las 2 columnas que nos resultan relevantes
@@ -63,13 +62,17 @@ tb_ganancias <- data.table(semillas = ksemillas)
 tb_ganancias[, individual := 0]
 tb_ganancias[, semillerio := 0]
 
+
 # Tabla que contendrá los rankings de todos los clientes para todas las semillas
 tb_ranking_semillerio <- data.table(numero_de_cliente = dataset_julio[, numero_de_cliente])
 tb_prediccion_semillerio_acumulado <- data.table(numero_de_cliente = dataset_julio[, numero_de_cliente])
 
-#semillas <- c(888809, 888827, 888857, 888869, 888887)
+semillas <- c(888809, 888827, 888857, 888869, 888887)
 set.seed(888809)
 archivos <- sample(archivos)
+
+#for (seed in semillas){
+#  archivos <-sample(archivos)
 
 for (archivo in archivos) {
   
@@ -128,10 +131,15 @@ for (archivo in archivos) {
   
   message("Para la semilla ", ksemilla, " se obtiene ganancia individual de ", calcularGanancia(dataset_julio, tb_prediccion))
 }
+#} 
 
 fwrite(tb_prediccion_semillerio_acumulado, "predictor_acumulado.csv", sep = ",")
 
-pdf("semillerio_vs_individuales1.pdf")
+#fwrite(tb_ganancias, "ganancia_semillas.csv", sep = ",")
+
+tb_ganancias
+
+pdf("semillerio_vs_individuales4.pdf")
 secuencia <- seq(from = 1, to = length(tb_ganancias$semilla))
 yminimo <- min(tb_ganancias$individual) - 0.005 * min(tb_ganancias$individual)
 ymaximo <- max(tb_ganancias$individual) + 0.005 * max(tb_ganancias$individual)
@@ -141,7 +149,7 @@ plot(secuencia, tb_ganancias$semillerio,
      ylim = c(yminimo, ymaximo),
      xlab = "Semillas",
      ylab = "Ganancia total Julio 2021",
-     main = "Experimento Semillerio - 11000 envios"
+     main = "Experimento Semillerio - 7000 envios"
 )
 points(secuencia, tb_ganancias$individual, col = "blue")
 abline(h=mean(tb_ganancias$individual), col = "green")
@@ -151,4 +159,5 @@ legend("bottomleft",
        fill = c("red", "blue", "green"),
        horiz = FALSE
 )
+
 dev.off()
