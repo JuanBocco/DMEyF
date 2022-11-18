@@ -20,7 +20,7 @@ PARAM$experimento  <- "DR9141"
 PARAM$exp_input  <- "CA9060"
 
 #valores posibles  "ninguno" "rank_simple" , "rank_cero_fijo" , "deflacion"
-PARAM$metodo  <- "deflacion"
+PARAM$metodo  <- "rank_cero_fijo"
 # FIN Parametros del script
 
 
@@ -57,14 +57,6 @@ AgregarVariables  <- function( dataset )
   dataset[ , mv_status07       := ifelse( is.na(Master_status), 
                                           ifelse( is.na(Visa_status), 10, Visa_status), 
                                           Master_status)  ]
-  
-  dataset[ , prisionero := as.integer(ccuenta_debitos_automaticos>=1 & (cpagodeservicios+ cpagomiscuentas)>=1 & ctrx_quarter>=2 & ctarjeta_debito_transacciones>= 5 & (cseguro_vida+cseguro_auto+cseguro_vivienda)>=1)]
-  
-  dataset[ , tiene_saldo := as.integer( mcuentas_saldo > 0 ) ]                    
-  dataset[ , sueldo_sobre_lim := (Master_mlimitecompra+Visa_mlimitecompra)/(mpayroll+mpayroll2)]
-  dataset[ , consumo_sobre_lim := (Master_mlimitecompra+Visa_mlimitecompra) - (mtarjeta_visa_consumo+mtarjeta_master_consumo)]
-  dataset[ , tiene_deuda := (mprestamos_personales+mprestamos_prendarios+mprestamos_hipotecarios) > 0]
-  dataset[ , invierte := (minversion1_pesos + minversion2 + minversion1_dolares >0)]
   
   
   #combino MasterCard y Visa
@@ -109,6 +101,15 @@ AgregarVariables  <- function( dataset )
   dataset[ , vmr_mpagominimo         := vm_mpagominimo  / vm_mlimitecompra ]
   
   #Aqui debe usted agregar sus propias nuevas variables
+  dataset[ , prisionero := as.integer(ccuenta_debitos_automaticos>=1 & (cpagodeservicios+ cpagomiscuentas)>=1 & ctrx_quarter>=2 & ctarjeta_debito_transacciones>= 5 & (cseguro_vida+cseguro_auto+cseguro_vivienda)>=1)]
+  
+  dataset[ , tiene_saldo := as.integer( mcuentas_saldo > 0 ) ]                    
+  dataset[ , sueldo_sobre_lim := (Master_mlimitecompra+Visa_mlimitecompra)/(mpayroll+mpayroll2)]
+  dataset[ , consumo_sobre_lim := (Master_mlimitecompra+Visa_mlimitecompra) - (mtarjeta_visa_consumo+mtarjeta_master_consumo)]
+  dataset[ , tiene_deuda := (mprestamos_personales+mprestamos_prendarios+mprestamos_hipotecarios) > 0]
+  dataset[ , invierte := (minversion1_pesos + minversion2 + minversion1_dolares >0)]
+  
+  
   
   #valvula de seguridad para evitar valores infinitos
   #paso los infinitos a NULOS
